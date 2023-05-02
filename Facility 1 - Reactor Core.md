@@ -40,4 +40,14 @@ The reactor needs energy to start the initial fusion process before it’s self-
 #### How:
 The sources will generate energy which will be stored in a battery before being delivered straight to the plasma generator, which will use the energy to fuse hydrogen atoms together and generate lots of energy in the process.
 
-## Part 2 - 
+## Part 2 - The lasers
+
+#### Main Lasers
+>This is the two primary lasers required to start and sustain the reactor.
+>The main lasers is required because these are the power beams, used to sustain and actually start the reactor.
+>If these are not available, the reactor would not start.
+>How:
+>>The main fuel & hydrogen source is delivered from here which is one of the primary reasons why this is nesscary.
+
+#### Power Lasers
+>
