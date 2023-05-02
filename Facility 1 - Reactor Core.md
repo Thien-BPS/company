@@ -45,9 +45,16 @@ The sources will generate energy which will be stored in a battery before being 
 #### Main Lasers
 >This is the two primary lasers required to start and sustain the reactor.
 >The main lasers is required because these are the power beams, used to sustain and actually start the reactor.
->If these are not available, the reactor would not start.
+>If these are not available, the reactor would not start.  
 >How:
 >>The main fuel & hydrogen source is delivered from here which is one of the primary reasons why this is nesscary.
+>>It also heats the reactor enough to continue and regulate the nuclear fusion.
 
 #### Power Lasers
->
+>These are the lasers to determine if the reaction should be fast and hot or slow and cold. These are also adjustable.
+>While you don't technically need the power lasers, the reactor won't be sustainable this way.
+>The fuel & hydrogen source is also delivered here.
+
+#### Stablization Lasers
+>These are the most important lasers because these regulate and stablize (hence the name) the fusion inside the core.
+>If there's a defect in these, this will cause the reactor to destablize and cause a thermal runaway and explode the entire facility.
