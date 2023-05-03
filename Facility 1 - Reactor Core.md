@@ -58,3 +58,4 @@ The sources will generate energy which will be stored in a battery before being 
 #### Stablization Lasers
 >These are the most important lasers because these regulate and stablize (hence the name) the fusion inside the core.
 >If there's a defect in these, this will cause the reactor to destablize and cause a thermal runaway and explode the entire facility.
+>How this works is that it shoots lasers at the shield to power it. While it's doing that, it pulls out the extra helium and splits it back into hydrogen which is delivered back to the reactor via the main lasers.
