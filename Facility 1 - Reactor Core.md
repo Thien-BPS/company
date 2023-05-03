@@ -71,12 +71,57 @@ Here is how the startup works:
     1. First, it initializes the hydrogen delivery gas pipes.
     1. It then sends the the 95% power from the init to power to start the main lasers.
         1. This will cause a combustion process which will have the fire loaded with microwave energy and smelted with >50K*C temperatures to generate plasma.
-    1. If manual mode was enabled, this is where you will take over.
-    1. If `--manual-start` or `(manual)` was not passed, it continues the process.
         1. It does a while loop to repeat similar steps above to do the stablization lasers, and the power lasers.
     1. It opens the chamber and.... (BOOOOOOOOOOOOOOOOOM!!!!!)
     1. Extremely hot plasma (>35K\*C) will pipe through the laser structure and then concentrated on the center of the chamber. The reactor will start the fusion process with the temperature in the very center (with the size of less than 0.5 millimeters) being over 45M\*C.
     1. The stablizations lasers come into play here where the shield gets immediatly generated and reaches 100% capacity. The SLs will pull the excess helium out and turn it back into hydrogen within 450ms.
     1. The PLs will reduce the power down to 20%, enough to lower it's instability enough that it won't be an issue.
 
-The startup will be done from here.
+The startup will be done from here.  
+In laymen's term, you press a button, then it powers the lasers to 500%, and it finally gets stablized by the SLs.
+
+## Part 4 - The control modules.
+There are 3 rows and 2 columns.
+Note that the rows and columns are ordered from the entrance, to the the glass seperating you from the reactor control chamber.
+
+Here is the image for the row 1, column 1:
+![The controls for row 1, column 1](/image/ctrl_modules/r1-c1.jpeg "The controls for row 1, column 1")
+
+#### Description:
+blah
+
+Here is the image for the row 1, column 1:
+![The controls for row 1, column 1](/image/ctrl_modules/r1-c2.jpeg "The controls for row 1, column 1")
+
+#### Description:
+blah
+
+### Row 2
+
+Here is the image for the row 1, column 1:
+![The controls for row 1, column 1](/image/ctrl_modules/r2-c1.jpeg "The controls for row 1, column 1")
+
+#### Description:
+blah
+
+Here is the image for the row 1, column 1:
+![The controls for row 1, column 1](/image/ctrl_modules/r2-c2.jpeg "The controls for row 1, column 1")
+
+#### Description:
+blah
+
+### Row 3
+
+Here is the image for the row 1, column 1:
+![The controls for row 1, column 1](/image/ctrl_modules/r3-c1.jpeg "The controls for row 1, column 1")
+
+#### Description:
+blah
+
+Here is the image for the row 1, column 1:
+![The controls for row 1, column 1](/image/ctrl_modules/r3-c2.jpeg "The controls for row 1, column 1")
+
+#### Description:
+blah
+
+# The end.
