@@ -85,43 +85,13 @@ There are 3 rows and 2 columns.
 Note that the rows and columns are ordered from the entrance, to the the glass seperating you from the reactor control chamber.
 
 Here is the image for the row 1, column 1:
-![The controls for row 1, column 1](/image/ctrl_modules/r1-c1.jpeg "The controls for row 1, column 1")
+>![The controls for row 1, column 1](/image/ctrl_modules/r1-c1.jpg "The controls for row 1, column 1")
 
-#### Description:
-blah
+>#### Description:
+>This contains the necessary buttons and switches to start the reactor.
 
-Here is the image for the row 1, column 1:
-![The controls for row 1, column 1](/image/ctrl_modules/r1-c2.jpeg "The controls for row 1, column 1")
-
-#### Description:
-blah
-
-### Row 2
-
-Here is the image for the row 1, column 1:
-![The controls for row 1, column 1](/image/ctrl_modules/r2-c1.jpeg "The controls for row 1, column 1")
-
-#### Description:
-blah
-
-Here is the image for the row 1, column 1:
-![The controls for row 1, column 1](/image/ctrl_modules/r2-c2.jpeg "The controls for row 1, column 1")
-
-#### Description:
-blah
-
-### Row 3
-
-Here is the image for the row 1, column 1:
-![The controls for row 1, column 1](/image/ctrl_modules/r3-c1.jpeg "The controls for row 1, column 1")
-
-#### Description:
-blah
-
-Here is the image for the row 1, column 1:
-![The controls for row 1, column 1](/image/ctrl_modules/r3-c2.jpeg "The controls for row 1, column 1")
-
-#### Description:
-blah
+Here is the image for the row 1, column 2:
+>![The controls for row 1, column 2](/image/ctrl_modules/r1-c2.jpeg "The controls for row 1, column 2")
+Not done.
 
 # The end.
