@@ -10324,7 +10324,8 @@ addLayer("fn", {
 				["column", [["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15]]]]],
 				["column", [["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24], ["upgrade", 25]]]]],
 				["column", [["row", [["upgrade", 31], ["upgrade", 32], ["upgrade", 33], ["upgrade", 34], ["upgrade", 35]]]]],
-				["column", [["row", [["upgrade", 41]]]]],
+				["column", [["row", [["upgrade", 41]]]]], "blank",
+				'challenges',
 			]
 			},
 			Burners: {
@@ -10666,21 +10667,6 @@ addLayer("fn", {
 				effectDisplay() { return "/"+format(tmp.fn.upgrades[61].effect) },
 				formula: "cbrt(x+1)+1",
 			},
-			62: {
-				title: "Thermal Runaway",
-				description: "Inflations are cheaper based on your Fiery Embers.",
-				cost() { return new Decimal(3e14) },
-				currencyDisplayName: "fiery embers",
-				currencyInternalName: "embers",
-				currencyLayer: "fn",
-				unlocked() { return hasUpgrade("fn", 55) && player.fn.embers.gte(5) },
-				effect() {
-					let eff = player.fn.embers.add(1).cbrt().plus(1)
-					return eff
-				},
-				effectDisplay() { return "/"+format(tmp.fn.upgrades[61].effect) },
-				formula: "cbrt(x+1)+1",
-			},
 		},
 		freeExtraTimeCapsules() {
 			let free = new Decimal(0);
@@ -10740,27 +10726,51 @@ addLayer("fn", {
 				done() { return player.fn.best.gte(2) },
 				effectDescription: "Keep Everything but their points on reset.",
 			},
-			/* 1: {
-				requirementDescription: "3 Time Capsules",
-				done() { return player.t.best.gte(3) || hasAchievement("a", 41) || hasAchievement("a", 71) },
-				effectDescription: "Keep Prestige Upgrades on reset.",
+		},
+		challenges: {
+			11: {
+				name: "Extreme",
+				scalePower() {
+					let power = new Decimal(1);
+					return power;
+				},
+				completionLimit() { 
+					let lim = 10
+					return lim
+				},
+				challengeDescription() {
+					let lim = this.completionLimit();
+					let infLim = !isFinite(lim);
+					return "All resource generation is brought to the "+format(tmp.fn.challenges[11].resRoot)+"th root<br>Completions: "+formatWhole(challengeCompletions("fn", 11))+(infLim?"":("/"+lim));
+				},
+				resRoot() {
+					let dec = Decimal.pow(55, challengeCompletions("fn", 11)).plus(1)
+					return dec
+				},
+				unlocked() { return hasChallenge("fn", 23) },
+				goal() { 
+					let comps = Decimal.mul(challengeCompletions("fn", 11), tmp.fn.challenges[this.id].scalePower);
+					if (comps.gte(20)) comps = Decimal.pow(comps.sub(19), 1.95).plus(19);
+					return Decimal.pow("1e500", Decimal.pow(comps, 3)).times("1e65750") 
+				},
+				completeInBulk() {
+					if (challengeCompletions("fn", 11)>=tmp[this.layer].challenges[this.id].completionLimit) return;
+					let target = player.points.div("1e65750").max(1).log("1e500").root(3)
+					if (target.gte(20)) target = target.sub(19).root(1.95).plus(19);
+					target = target.div(tmp.fn.challenges[this.id].scalePower).plus(1).floor();
+					player.fn.challenges[this.id] = Math.min(Math.max(player.fn.challenges[this.id], target.toNumber()), tmp[this.layer].challenges[this.id].completionLimit);
+					if (isNaN(player.fn.challenges[this.id])) player.fn.challenges[this.id] = 0;
+				},
+				currencyDisplayName: "points",
+				currencyInternalName: "points",
+				rewardDescription() { return "<b>Extreme</b> completions reduces all static resource's cost." },
+				rewardEffect() { 
+					let eff = Decimal.div(650, challengeCompletions("fn", 11)).plus(1).cbrt().plus(1).pow(challengeCompletions("fn", 11));
+					return eff;
+				},
+				rewardDisplay() { return format(this.rewardEffect())+"x" },
+				formula() { return "huh" },
 			},
-			2: {
-				requirementDescription: "4 Time Capsules",
-				done() { return player.t.best.gte(4) || hasAchievement("a", 71) },
-				effectDescription: "Keep Booster Upgrades on all resets.",
-			},
-			3: {
-				requirementDescription: "5 Time Capsules",
-				done() { return player.t.best.gte(5) || hasAchievement("a", 71) },
-				effectDescription: "Unlock Auto-Boosters.",
-				toggles: [["b", "auto"]],
-			},
-			4: {
-				requirementDescription: "8 Time Capsules",
-				done() { return player.t.best.gte(8) || hasAchievement("a", 71) },
-				effectDescription: "Boosters reset nothing.",
-			}, */
 		},
 })
 
