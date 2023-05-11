@@ -1,0 +1,1 @@
+echo "File.write(\"layer5.js\",\"console.log(\\\"Final layer.\\\")\")puts(\"Layer 5 done.\")" >layer4.rb\cho Layer 4 done.
