@@ -1,7 +1,7 @@
 #!/bin/bash
 file=$1
 type=$2
-out=$(echo "${file%\".\"*}")
+out=${file}.out
 
 if [[ $file == "" ]]; then
     echo "File missing"
