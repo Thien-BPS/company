@@ -20,4 +20,5 @@ elif [[ $type == "bash" || $type == "shell" || $type == "sh" ]]; then
     ./$file
 else
     echo "Not a lang: ${type}"
+    exit 1
 fi

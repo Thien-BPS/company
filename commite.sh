@@ -10,6 +10,8 @@ if [[ $1 != "" ]]; then
     elif [[ $1 == "pull" ]]; then
         git pull; git rebase
     fi
+else
+    exit 1
 fi
 
 exit 1
