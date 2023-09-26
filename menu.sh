@@ -9,11 +9,23 @@ GREEN_TEXT=$(echo "\033[1;32m")
 ENTER_LINE=$(echo "\033[33m")
 function ver_info() {
 	local param=$1
-	local os_type=$2
+	local cros=$2
 	if [[ "$param" == "ver" ]]; then
 		if [[ "$osKernel" == "Linux" ]]; then
 			echo -ne $(cat /etc/os-release | grep VERSION= | sed 's/.$//; s/^VERSION="//'^C)
+		elif [[ "$osKernel" == "Darwin" ]]; then
+			echo -ne $(sw_vers | grep ProductVer | sed 's/^ProductVersion://' | tr -d ' ' | tr -d '[:blank:]')
+		elif [[ "$osKernel" == "Linux" && $cros == 1 ]]; then
+			echo -ne $(cat /etc/lsb-release | grep CHROMEOS_RELEASE_VERSION | sed 's/^CHROMEOS_RELEASE_VERSION=//')
 		fi
+	elif [[ "$param" == "script_ver" ]]; then
+		echo -ne "${currVer}"
+	elif [[ "$param" == "script_date" ]]; then
+		echo -ne "${currVerDate}"
+	elif [[ "$param" == "board_ver" && $cros == 1]]; then
+		echo -ne "${device}"
+	elif [[ "$param" == "fw_info" && $cros == 1 && "$isChromeOS" == true ]]; then
+		echo -ne "$(sudo crossystem fwid || cut -d"." -f1)"
 	fi
 }
 function cleanup() {
@@ -27,19 +39,21 @@ function menu_header() {
     clear
 	echo -e "${NORMAL}\n Thien's OS debugging utility ${script_date} ${NORMAL}"
 	echo -e "${MENU}*********************************************************${NORMAL}"
-	echo -e "${MENU}**${NUMBER}		OS: ${NORMAL}$(ver_info "ver") (Running on ${osKernel})"
+	echo -e "${MENU}**${NUMBER}		OS: ${NORMAL}$(ver_info "ver") (Running on ${osKernel} kernel)"
 	if [[ $isChromeOS == true ]]; then
 		echo -e "${MENU}**${NUMBER}		CrOS Platform: ${NORMAL}$(ver_info "board_ver" 1)"
 		echo -e "${MENU}**${NUMBER}  	CrOS FW Info: ${NORMAL}$(ver_info "fw_info" 1)"
 	fi
 	echo -e "${MENU}**${NUMBER}  	Script Version: ${NORMAL}$(ver_info "script_ver") (date: $(ver_info "script_date"))"
 	if [[ $isChromeOS == true ]]; then
-		if [ "$wpEnabled" = true ]; then
-			echo -e "${MENU}**${NUMBER}    Fw WP: ${RED_TEXT}Enabled${NORMAL}"
+		if [ "$(crossystem wpsw_cur?1)" = true ]; then
+			echo -e "${MENU}**${NUMBER}    CrOS FW WP: ${RED_TEXT}Enabled${NORMAL}"
 			WP_TEXT=${RED_TEXT}
+			wpEnabled=true
 		else
-			echo -e "${MENU}**${NUMBER}    Fw WP: ${NORMAL}Disabled"
+			echo -e "${MENU}**${NUMBER}    CrOS FW WP: ${NORMAL}Disabled"
 			WP_TEXT=${GREEN_TEXT}
+			wpEnabled=false
 		fi
 	fi
 	echo -e "${MENU}*********************************************************${NORMAL}"
@@ -48,40 +62,38 @@ function main_menu() {
 
 	menu_header
 
-	if [[ "$unlockMenu" = true || ( "$isFullRom" = false && "$isBootStub" = false && "$isUnsupported" = false && "$isEOL" = false ) ]]; then
-		echo -e "${MENU}**${WP_TEXT}     ${NUMBER} 1)${MENU} Install/Update RW_LEGACY Firmware ${NORMAL}"
+	if [[ "$unlockMenu" = true || ( "$isChromeOS" == true ) ]]; then
+		echo -e "${MENU}**${WP_TEXT}     ${NUMBER} 1)${MENU} Reset Chrome/Chromium OS to Stock (includes firmware) ${NORMAL}"
 	else
-		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 1)${GRAY_TEXT} Install/Update RW_LEGACY Firmware ${NORMAL}"
+		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 1)${GRAY_TEXT} Reset Chrome/Chromium OS to Stock (includes firmware) ${NORMAL}"
 	fi
 
-	if [[ "$unlockMenu" = true || "$hasUEFIoption" = true || "$hasLegacyOption" = true ]]; then
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 2)${MENU} Install/Update UEFI (Full ROM) Firmware ${NORMAL}"
+	if [[ "$unlockMenu" = true || ( "$isChromeOS" == true ) ]]; then
+		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 2)${MENU} Reset the ChromeOS firmware to stock ${NORMAL}"
 	else
-		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 2)${GRAY_TEXT} Install/Update UEFI (Full ROM) Firmware${NORMAL}"
+		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 2)${GRAY_TEXT} Reset the ChromeOS firmware to stock ${NORMAL}"
 	fi
-	if [[ "${device^^}" = "EVE" ]]; then
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} D)${MENU} Downgrade Touchpad Firmware ${NORMAL}"
-	fi
-	if [[ "$unlockMenu" = true || ( "$isFullRom" = false && "$isBootStub" = false ) ]]; then
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 3)${MENU} Set Boot Options (GBB flags) ${NORMAL}"
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 4)${MENU} Set Hardware ID (HWID) ${NORMAL}"
+	if [[ "$unlockMenu" = true || "$osKernel" == "Darwin" ]]; then
+		echo -e "${MENU}**     ${NUMBER} 3)${MENU} Reset macOS to Stock (excludes firmware) ${NORMAL}"
+		#echo -e "${MENU}**     ${NUMBER} 4)${MENU} Reset macOS to Stock (includes firmware) ${NORMAL}"
 	else
-		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 3)${GRAY_TEXT} Set Boot Options (GBB flags)${NORMAL}"
-		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 4)${GRAY_TEXT} Set Hardware ID (HWID) ${NORMAL}"
+		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 3)${GRAY_TEXT} Reset macOS to Stock (excludes firmware) ${NORMAL}"
+		#echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 4)${GRAY_TEXT} Reset macOS to Stock (includes firmware) ${NORMAL}"
 	fi
-	if [[ "$unlockMenu" = true || ( "$isFullRom" = false && "$isBootStub" = false && \
-		("$isHsw" = true || "$isBdw" = true || "$isByt" = true || "$isBsw" = true )) ]]; then
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 5)${MENU} Remove ChromeOS Bitmaps ${NORMAL}"
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 6)${MENU} Restore ChromeOS Bitmaps ${NORMAL}"
+	if [[ "$unlockMenu" = true || ( "$isChromeOS" == true ) ]]; then
+		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 5)${MENU} Remove ChromeOS Forced Enrollment ${NORMAL}"
 	fi
-	if [[ "$unlockMenu" = true || ( "$isChromeOS" = false  && "$isFullRom" = true ) ]]; then
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 7)${MENU} Restore Stock Firmware (full) ${NORMAL}"
+	if [[ "$unlockMenu" = true || ( "$osKernel" == "Darwin" ) ]]; then
+		echo -e "${MENU}**    ${NUMBER} 6)${MENU} Remove macOS Forced Enrollment ${NORMAL}"
 	fi
-	if [[ "$unlockMenu" = true || ( "$isByt" = true && "$isBootStub" = true && "$isChromeOS" = false ) ]]; then
-		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 8)${MENU} Restore Stock BOOT_STUB ${NORMAL}"
+	if [[ "$unlockMenu" = true && "$isChromeOS" == true ]]; then
+		echo -e "${MENU}**    ${NUMBER} 7)${MENU} Install sh1mmer & fakemurk on chromeOS ${NORMAL}"
 	fi
-	if [[ "$unlockMenu" = true || "$isUEFI" = true ]]; then
-		echo -e "${MENU}**${WP_TEXT}     ${NUMBER} C)${MENU} Clear UEFI NVRAM ${NORMAL}"
+	if [[ "$unlockMenu" = true && "$isChromeOS" == true ]]; then
+		echo -e "${MENU}**    ${NUMBER} 8)${MENU} Reset Chrome/Chromium OS via Powerwashing ${NORMAL}"
+	fi
+	if [[ "$unlockMenu" = true || "$verbose" == false ]]; then
+		echo -e "${MENU}**     ${NUMBER} V)${MENU} Enable Verbosity Mode for $0 ${NORMAL}"
 	fi
 	echo -e "${MENU}*********************************************************${NORMAL}"
 	echo -e "${ENTER_LINE}Select a menu option or${NORMAL}"
@@ -90,64 +102,59 @@ function main_menu() {
 	read -e opt
 	case $opt in
 
-		1)  if [[ "$unlockMenu" = true || "$isEOL" = false && ("$isChromeOS" = true \
-					|| "$isFullRom" = false && "$isBootStub" = false && "$isUnsupported" = false) ]]; then
-				flash_rwlegacy
+		1)  if [[ "$unlockMenu" == true || ("$isChromeOS" == true )]]; then
+				cros_restore
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
-		2)  if [[  "$unlockMenu" = true || "$hasUEFIoption" = true || "$hasLegacyOption" = true ]]; then
-				flash_coreboot
+		2)  if [[  "$unlockMenu" == true || "$isChromeOS" == true]]; then
+				cros_restore_fw
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
-		[dD])  if [[  "${device^^}" = "EVE" ]]; then
-				downgrade_touchpad_fw
+		3)  if [[ "$unlockMenu" == true || "$osKernel" == "Darwin" ]]; then
+				mac_restore
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
-		3)  if [[ "$unlockMenu" = true || "$isChromeOS" = true || "$isUnsupported" = false \
-					&& "$isFullRom" = false && "$isBootStub" = false ]]; then
-				set_boot_options
-			fi
-			menu_fwupdate
+		4)  #if [[ "$unlockMenu" = true || "$isChromeOS" = true || "$isUnsupported" = false \
+			#		&& "$isFullRom" = false && "$isBootStub" = false ]]; then
+			#	set_hwid
+			#fi
+			info "This currently does nothing."
+			sleep 5
+			main_menu
 			;;
 
-		4)  if [[ "$unlockMenu" = true || "$isChromeOS" = true || "$isUnsupported" = false \
-					&& "$isFullRom" = false && "$isBootStub" = false ]]; then
-				set_hwid
+		5)  if [[ "$unlockMenu" == true || ( "$isChromeOS" == true )  ]]; then
+				cros_disable_fc_enrl
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
-		5)  if [[ "$unlockMenu" = true || ( "$isFullRom" = false && "$isBootStub" = false && \
-					( "$isHsw" = true || "$isBdw" = true || "$isByt" = true || "$isBsw" = true ) )  ]]; then
-				remove_bitmaps
-			fi
-			menu_fwupdate
+		6)  #if [[ "$unlockMenu" = true || ( "$isFullRom" = false && "$isBootStub" = false && \
+			#		( "$isHsw" = true || "$isBdw" = true || "$isByt" = true || "$isBsw" = true ) )  ]]; then
+			#	restore_bitmaps
+			#fiv
+			info "This currently does nothing."
+			sleep 5
+			main_menu
 			;;
 
-		6)  if [[ "$unlockMenu" = true || ( "$isFullRom" = false && "$isBootStub" = false && \
-					( "$isHsw" = true || "$isBdw" = true || "$isByt" = true || "$isBsw" = true ) )  ]]; then
-				restore_bitmaps
+		7)  if [[ "$unlockMenu" -= true || "$isChromeOS" == true ]]; then
+				cros_disable_fc_enrl
+				cros_drop_fakemurk
 			fi
-			menu_fwupdate
-			;;
-
-		7)  if [[ "$unlockMenu" = true || "$isChromeOS" = false && "$isUnsupported" = false \
-					&& "$isFullRom" = true ]]; then
-				restore_stock_firmware
-			fi
-			menu_fwupdate
+			main_menu
 			;;
 
 		8)  if [[ "$unlockMenu" = true || "$isBootStub" = true ]]; then
-				restore_boot_stub
+				cros_powerwash
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
 		[rR])  echo -e "\nRebooting...\n";
@@ -168,20 +175,20 @@ function main_menu() {
 
 		[U])  if [ "$unlockMenu" = false ]; then
 				echo_yellow "\nAre you sure you wish to unlock all menu functions?"
-				read -ep "Only do this if you really know what you are doing... [y/N]? "
+				read -ep "Only do this if you really know what you are doing... (or your debugging) [y/N]? "
 				[[ "$REPLY" = "y" || "$REPLY" = "Y" ]] && unlockMenu=true
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
-		[cC]) if [[ "$unlockMenu" = true || "$isUEFI" = true ]]; then
-				clear_nvram
+		[vV]) if [[ "$unlockMenu" = true || "$verbose" == false ]]; then
+				verbose=true
 			fi
-			menu_fwupdate
+			main_menu
 			;;
 
 		*)  clear
-			menu_fwupdate;
+			main_menu;
 			;;
 	esac
 }
