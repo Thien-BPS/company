@@ -17,6 +17,7 @@ elif [[ $type == "py" ]]; then
 elif [[ $type == "ruby" ]]; then
     ruby $file
 elif [[ $type == "bash" || $type == "shell" || $type == "sh" ]]; then
+    chmod +x $file
     ./$file
 else
     echo "Not a lang: ${type}"

@@ -175,7 +175,7 @@ function main_menu() {
 
 		[U])  if [ "$unlockMenu" = false ]; then
 				echo_yellow "\nAre you sure you wish to unlock all menu functions?"
-				read -ep "Only do this if you really know what you are doing... (or your debugging) [y/N]? "
+				read -ep "Only do this if you really know what you are doing... (or you're debugging) [y/N]? "
 				[[ "$REPLY" = "y" || "$REPLY" = "Y" ]] && unlockMenu=true
 			fi
 			main_menu
