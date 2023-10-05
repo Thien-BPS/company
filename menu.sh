@@ -29,7 +29,11 @@ function ver_info() {
 	fi
 }
 function cleanup() {
-
+	info "Cleaning up mountpoints..."
+	debug "Unmounting: ${mountPoints[@]}, ${loopPoints[@]}"
+	for i in ${mountPoints[@]}; do
+		umount --detach-loop $i
+	done
 }
 function cleanup_dirty() {
 
