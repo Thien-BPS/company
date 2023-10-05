@@ -11,6 +11,7 @@ if [[ $1 != "" ]]; then
         git pull; git rebase
     fi
 else
+    echo "ERROR: not an action: $1"
     exit 1
 fi
 
