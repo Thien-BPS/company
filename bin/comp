@@ -3,22 +3,22 @@ file=$1
 type=$2
 out=${file}.out
 
-if [[ $file == "" ]]; then
+if [[ "$file" == "" ]]; then
     echo "File missing"
     exit 1
 fi
 
 if [[ $type == "c" ]]; then
-    gcc $file -o $out; ./$out
+    gcc "$file" -o "$out"; ./"$out"
 elif [[ $type == "c++" || $type == "cpp" ]]; then
-    g++ $file -o $out; ./$out
+    g++ "$file" -o "$out"; ./"$out"
 elif [[ $type == "py" ]]; then
-    python $file
+    python "$file"
 elif [[ $type == "ruby" ]]; then
-    ruby $file
+    ruby "$file"
 elif [[ $type == "bash" || $type == "shell" || $type == "sh" ]]; then
-    chmod +x $file
-    ./$file
+    chmod +x "$file"
+    ./"$file"
 else
     echo "Not a lang: ${type}"
     exit 1
