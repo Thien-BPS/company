@@ -79,10 +79,8 @@ function main_menu() {
 	fi
 	if [[ "$unlockMenu" = true || "$osKernel" == "Darwin" ]]; then
 		echo -e "${MENU}**     ${NUMBER} 3)${MENU} Reset macOS to Stock (excludes firmware) ${NORMAL}"
-		#echo -e "${MENU}**     ${NUMBER} 4)${MENU} Reset macOS to Stock (includes firmware) ${NORMAL}"
 	else
 		echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 3)${GRAY_TEXT} Reset macOS to Stock (excludes firmware) ${NORMAL}"
-		#echo -e "${GRAY_TEXT}**     ${GRAY_TEXT} 4)${GRAY_TEXT} Reset macOS to Stock (includes firmware) ${NORMAL}"
 	fi
 	if [[ "$unlockMenu" = true || ( "$isChromeOS" == true ) ]]; then
 		echo -e "${MENU}**${WP_TEXT} [WP]${NUMBER} 5)${MENU} Remove ChromeOS Forced Enrollment ${NORMAL}"
